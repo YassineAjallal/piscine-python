@@ -14,7 +14,7 @@ NESTED_MORSE = {
     'J': '.--- ',
     'K': '-.- ',
     'L': '.-.. ',
-    'M': '--',   
+    'M': '--',
     'N': '-. ',
     'O': '--- ',
     'P': '.--. ',
@@ -40,12 +40,14 @@ NESTED_MORSE = {
     '9': '----. ',
 }
 
+
 def valid_string(string: str) -> int:
     return sum(1 for s in string if (s.isalnum() or s == ' '))
 
 
 def morse(string: str) -> str:
     return [NESTED_MORSE[s.upper()] for s in string]
+
 
 def main():
     if len(sys.argv) != 2:
@@ -54,7 +56,8 @@ def main():
         if valid_string(sys.argv[1]) != len(sys.argv[1]):
             print("AssertionError: the arguments are bad")
         else:
-           print(''.join(morse(sys.argv[1])))
+            print(''.join(morse(sys.argv[1])))
+
 
 if __name__ == "__main__":
     main()
