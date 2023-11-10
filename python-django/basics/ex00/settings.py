@@ -1,0 +1,5 @@
+name = "yassine"
+surname = "ajallal"
+age = "18"
+profession = "back-end developer"
+title = "cv"
