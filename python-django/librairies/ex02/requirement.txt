@@ -1,0 +1,4 @@
+dewiki:
+    pip3 install dewiki
+requests:
+    pip3 install requests
