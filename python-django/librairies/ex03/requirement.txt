@@ -1,0 +1,4 @@
+BeautifulSoup:
+    pip3.9 install BeautifulSoup4
+requests:
+    pip3 install requests
