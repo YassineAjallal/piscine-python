@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Ex01: Display process of a static page.{% endblock title %}
+{% block content %}
+The process of displaying a static web page in a Django application involves several steps, starting from the client's request to the server and culminating in the rendering of the HTML page. Here's an overview of the process:
+    <h1>Client Request:</h1>
+        The process begins when a user makes a request by entering a URL into their web browser or clicking on a link.
+    <h1>URL Mapping (urls.py):</h1>
+        Django uses the URLconf (URL configuration) to map the requested URL to a specific view. This mapping is defined in the urls.py file of your Django application.
+    <h1>View Function:</h1>
+        The URL mapping directs the request to a specific view function. The view function is responsible for processing the request and returning an HTTP response, which often involves rendering a template.
+    <h1>Template Rendering:</h1>
+        Within the view function, if the response involves rendering an HTML page, Django uses its template engine to render a template. The template might include dynamic content, static files, and template tags.
+    <h1>Static Files (if any):</h1>
+        If the HTML template includes static files such as CSS stylesheets, JavaScript files, or images, these files are served by Django's static file handling during template rendering.
+    <h1>Context Variables:</h1>
+        The view function may pass context variables to the template. These variables contain data that will be displayed or used dynamically in the template.
+    <h1>Template Processing:</h1>
+        The template engine processes the template, replacing template tags and expressions with actual values, including those from context variables.
+    <h1>HTML Response:</h1>
+        The template engine produces an HTML response, which is then sent back to the client as part of the HTTP response.
+    <h1>Client Rendering:</h1>
+        The client's web browser receives the HTML response and renders the static web page. Any static files (CSS, JavaScript, images) referenced in the HTML are also requested and loaded by the browser.
+    <h1>User Interaction:</h1>
+        The user interacts with the static web page. Any subsequent actions, such as clicking links or submitting forms, will trigger new requests and potentially invoke different views and templates.
+{% endblock %}
