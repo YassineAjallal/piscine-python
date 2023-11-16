@@ -24,8 +24,6 @@ def building_a_table(request):
             producer VARCHAR( 128 ) NOT NULL,
             release_date DATE NOT NULL DEFAULT CURRENT_DATE
         );""")
-        cur.execute("Select * FROM ex00_movies LIMIT 0")
-        colnames = [desc[0] for desc in cur.description]
     except Exception as err:
         return HttpResponse(f"<h1 style='font-family: sans-serif'>Error: Unable to connect to the database {err}</h1>")
     return HttpResponse(f"<h1 style='font-family: sans-serif'>ok</h1>")

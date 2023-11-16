@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'ex00',
+    'ex01',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,14 +76,18 @@ WSGI_APPLICATION = 'd05.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        'NAME': "yajallal",
-        'USER': "yajallal",
-        'PASSWORD': "yajallal",
-        'HOST': "localhost",
-        'PORT': "5432",  # 5432 by default
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # "default": {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     'NAME': "yajallal",
+    #     'USER': "yajallal",
+    #     'PASSWORD': "yajallal",
+    #     'HOST': "localhost",
+    #     'PORT': "5432",  # 5432 by default
+    # }
 }
 
 
