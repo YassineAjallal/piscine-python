@@ -96,6 +96,8 @@ def remove(request):
                 cur.execute(f"DELETE FROM ex04_movies WHERE title = '{selected}';")
                 connections_details.commit()
                 data_titles = list(filter(lambda x: x[0] != selected, data_titles))
+                if len(data_titles) == 0:
+                    return HttpResponse("<h1 style='font-family: sans-serif'>No data available</h1>")
                 dropdown = titleDropdown(data_titles)
                 
         else:
