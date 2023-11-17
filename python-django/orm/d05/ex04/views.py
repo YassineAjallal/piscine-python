@@ -1,6 +1,6 @@
 from django.shortcuts import render
 import psycopg2
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from ex04.forms import titleDropdown
 
 DATA = [
@@ -93,9 +93,13 @@ def remove(request):
             dropdown = titleDropdown(data_titles, request.POST)
             if dropdown.is_valid():
                 selected = dropdown.cleaned_data.get('titles')
+                cur.execute(f"DELETE FROM ex04_movies WHERE title = '{selected}';")
+                connections_details.commit()
+                data_titles = list(filter(lambda x: x[0] != selected, data_titles))
+                dropdown = titleDropdown(data_titles)
+                
         else:
             dropdown = titleDropdown(data_titles)
     except Exception as err:
         return HttpResponse(f"<h1 style='font-family: sans-serif'>Error: {err}</h1>")
     return render(request, 'drop.html', {"dropdown": dropdown})
-    # return HttpResponse(f"<h1 style='font-family: sans-serif'>{data_titles}</h1>")
