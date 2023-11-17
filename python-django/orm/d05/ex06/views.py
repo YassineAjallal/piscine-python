@@ -1,7 +1,11 @@
 from django.shortcuts import render
+from django.shortcuts import render
 import psycopg2
 from django.http import HttpResponse, HttpResponseRedirect
-from ex04.forms import titleDropdown
+from ex06.forms import openingCrawl
+from datetime import datetime
+
+# Create your views here.
 
 DATA = [
         {"episode_nb": 1, "title": "The Phantom Menace", "director": "George Lucas", "producer": "Rick McCallum ", "release_date": "1999-05-19"},
@@ -23,20 +27,39 @@ def building_a_table(request):
             port="5432"
         )
         cur = connections_details.cursor()
-        cur.execute("""CREATE TABLE IF NOT EXISTS ex04_movies (
+        cur.execute("""CREATE TABLE IF NOT EXISTS ex06_movies (
             title VARCHAR( 64 ) UNIQUE NOT NULL,
             episode_nb INT PRIMARY KEY,
             opening_crawl TEXT,
             director VARCHAR( 32 ) NOT NULL,
             producer VARCHAR( 128 ) NOT NULL,
-            release_date DATE NOT NULL DEFAULT CURRENT_DATE
+            release_date DATE NOT NULL DEFAULT CURRENT_DATE,
+            created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );""")
+        cur.execute("""CREATE OR REPLACE FUNCTION update_changetimestamp_column()
+            RETURNS TRIGGER AS $$
+            BEGIN
+            NEW.updated = now();
+            NEW.created = OLD.created;
+            RETURN NEW;
+            END;
+            $$ language 'plpgsql';
+            CREATE OR REPLACE TRIGGER update_films_changetimestamp BEFORE UPDATE
+            ON ex06_movies FOR EACH ROW EXECUTE PROCEDURE
+            update_changetimestamp_column();""")
         connections_details.commit()
+
+        cur.execute("SELECT created, updated FROM ex06_movies ORDER BY updated DESC LIMIT 1;")
+        updated = cur.fetchall()
+        print(updated)
+        if len(updated) == 0:
+            updated = [(datetime.now(), datetime.now())]
     except Exception as err:
         connections_details.close()
         return HttpResponse(f"<h1 style='font-family: sans-serif'>Error: Unable to connect to the database: {err}</h1>")
     connections_details.close()
-    return HttpResponse(f"<h1 style='font-family: sans-serif'>OK</h1>")
+    return render(request, 'init.html', {"items": updated})
 
 def insert_in_tabel(request):
     try:
@@ -49,7 +72,7 @@ def insert_in_tabel(request):
         )
         cur = connections_details.cursor()
         for data in DATA:
-            cur.execute(f"""INSERT INTO ex04_movies(episode_nb, title, director, producer, release_date) 
+            cur.execute(f"""INSERT INTO ex06_movies(episode_nb, title, director, producer, release_date) 
                         VALUES('{data['episode_nb']}', '{data['title']}', '{data['director']}', '{data['producer']}', '{data['release_date']}');""")
         connections_details.commit()
     except Exception as err:
@@ -68,42 +91,42 @@ def display(request):
                 port="5432"
             )
         cur = connections_details.cursor()
-        cur.execute("TABLE ex04_movies;")
+        cur.execute("TABLE ex06_movies;")
         ls = cur.fetchall()
         
     except:
         return HttpResponse("<h1 style='font-family: sans-serif'>No data available</h1>")
     if len(ls) == 0:
         return HttpResponse("<h1 style='font-family: sans-serif'>No data available</h1>")
-    return render(request, 'table.html', {"items": ls})
+    return render(request, 'data_table.html', {"items": ls})
 
-def remove(request):
+
+def update(request):
     try:
         connections_details = psycopg2.connect(
-                host="localhost",
-                database="yajallal",
-                user="yajallal",
-                password="yajallal",
-                port="5432"
-            )
+                    host="localhost",
+                    database="yajallal",
+                    user="yajallal",
+                    password="yajallal",
+                    port="5432"
+                )
         cur = connections_details.cursor()
-        cur.execute("SELECT title FROM ex04_movies;")
-        data_titles = cur.fetchall()
+        cur.execute("SELECT title FROM ex06_movies;")
+        data_titles = [(title[0], title[0]) for title in cur.fetchall()]
+        if len(data_titles) == 0:
+            cur.close()
+            return HttpResponse("<h1 style='font-family: sans-serif'>No data available</h1>")
         if request.method == "POST":
-            dropdown = titleDropdown(data_titles, request.POST)
-            if dropdown.is_valid():
-                selected = dropdown.cleaned_data.get('titles')
-                cur.execute(f"DELETE FROM ex04_movies WHERE title = '{selected}';")
+            opening_form = openingCrawl(data_titles, request.POST)
+            if opening_form.is_valid():
+                selected_title = opening_form.cleaned_data.get('titles')
+                new_opening = opening_form.cleaned_data.get('text_area')
+                cur.execute(f"""UPDATE ex06_movies SET opening_crawl = '{new_opening}' WHERE title = '{selected_title}';""")
                 connections_details.commit()
-                data_titles = list(filter(lambda x: x[0] != selected, data_titles))
-                cur.close()
-                if len(data_titles) == 0:
-                    return HttpResponse("<h1 style='font-family: sans-serif'>No data available</h1>")
-                dropdown = titleDropdown(data_titles)
-                
         else:
-            dropdown = titleDropdown(data_titles)
+            opening_form = openingCrawl(data_titles)
+        cur.close()
     except Exception as err:
         cur.close()
-        return HttpResponse(f"<h1 style='font-family: sans-serif'>Error: {err}</h1>")
-    return render(request, 'drop.html', {"dropdown": dropdown})
+        return HttpResponse("<h1 style='font-family: sans-serif'>No data available</h1>")
+    return render(request, 'opening.html', {"opening_form": opening_form})
