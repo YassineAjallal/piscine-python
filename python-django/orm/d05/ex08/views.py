@@ -84,7 +84,9 @@ def display(request):
 			WHERE position('windy' in ex08_planets.climate)>0;""")
         result = cur.fetchall()
         connection.close()
+        if (len(result) == 0):
+            return HttpResponse(f'<h1 style="font-family: sans-serif">No data available</h1>')
     except Exception as err:
         connection.close()
-        return HttpResponse(f'<h1 style="font-family: sans-serif">Error: {err}</h1>')
+        return HttpResponse(f'<h1 style="font-family: sans-serif">No data available</h1>')
     return render(request, 'people.html', {"results": result})
