@@ -28,4 +28,5 @@ urlpatterns = [
     path('ex07/', include('ex07.URLconf')),
     path('ex08/', include('ex08.URLconf')),
     path('ex09/', include('ex09.URLconf')),
+    path('ex10/', include('ex10.URLconf')),
 ]

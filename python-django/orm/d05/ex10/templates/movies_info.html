@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #9034db; /* Blue header background color */
+            color: #fff; /* White text color for header cells */
+        }
+        tr
+        {
+            transition: 0.3s;
+        }
+        tr:nth-child(even) {
+            background-color: #fff; /* Light gray background for even rows */
+        }
+
+        tr:hover {
+            background-color: #e0e0e0; /* Lighter gray background on hover */
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>Movie Title</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Home World</th>
+            <th>Diameter</th>
+        </tr>
+        {% for info in infos %}
+            <tr>
+                {% for inf in info %}
+                    <td>{{ inf }}</td>   
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+</table>
+</body>
+</html>

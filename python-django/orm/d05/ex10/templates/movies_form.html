@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+    <style>
+        /* General styling for the form */
+        form {
+        max-width: 400px;
+        margin: 20px auto;
+        font-family: 'Arial', sans-serif;
+        }
+
+        /* Style for date inputs */
+        input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+
+        /* Style for number input */
+        input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+
+        /* Style for select input */
+        select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+
+        /* Style for the submit button */
+        input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+
+        /* Hover effect for the submit button */
+        input[type="submit"]:hover {
+        background-color: #45a049;
+        }
+
+        /* Add some spacing between form elements */
+        form > * {
+            margin-bottom: 15px;
+        }
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            }
+
+            /* Hover effect for the submit button */
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Additional styles for the submit button */
+        input[type="submit"]:active {
+            background-color: #3e8e41;
+        }
+
+        /* Disable the submit button when the form is being submitted */
+        input[type="submit"]:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ movies }}
+        <!-- <button type="submit">update</button> -->
+        <input type="submit" value="search">
+    </form>
+</body>
+</html>
