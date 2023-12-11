@@ -1,0 +1,92 @@
+{% load bootstrap3 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        span
+        {
+            font-size: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+            margin: 0 15px;
+        }
+        .btns {
+            display: flex;
+            align-items: center;
+        }
+        .form-group
+        {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <span>Life Pro Tips</span>
+        {% if is_active %}
+            <p>Welcome, <span>{{ name }}</span></p>
+            <form method="POST">
+                {% csrf_token %}
+                {% buttons %}
+                    <button class="btn btn-primary" type="submit" name="action" value="logout">
+                        Log out
+                    </button>
+                {% endbuttons %}
+            </form>
+        {% else %}
+            <p>Welcome, <span id="name"></span></p>
+            <div class="btns">
+                {% url 'login_view' as login_url %}
+                {% url 'registration_view' as registration_url %}
+                {% buttons %}
+                    <a href="{{ login_url }}">
+                        <button class="btn btn-success">
+                            Sign in
+                        </button>
+                    </a>
+                {% endbuttons %}
+                {% buttons %}
+                    <a href="{{ registration_url }}">
+                        <button class="btn btn-primary">
+                            Sign up
+                        </button>
+                    </a>
+                {% endbuttons %}
+            </div>
+        {% endif %}
+    </nav>
+    <script>
+        fetch('http://127.0.0.1:8000/ex/api/')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('name').innerHTML = data.name
+        })
+        .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

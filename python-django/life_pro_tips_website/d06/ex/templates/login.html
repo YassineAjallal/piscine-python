@@ -1,0 +1,56 @@
+{% load bootstrap3 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            margin: 80px auto;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0;
+            text-align: left;
+        }
+
+        form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    {% if error|length > 0 %}
+        <div class="alert alert-danger">
+            <strong>Error!</strong> {{ error }}
+        </div>
+    {% endif %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <!-- {{ login_form }} -->
+        {% bootstrap_form login_form %}
+        <!-- <button type="submit">Sign in</button> -->
+        {% buttons %}
+            <button type="submit" class="btn btn-success">
+                Sign in
+            </button>
+        {% endbuttons %}
+    </form>
+</body>
+</html>

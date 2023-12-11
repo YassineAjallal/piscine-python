@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Home</title>
     <style>
         body {
             margin: 0;
@@ -28,22 +28,6 @@
     </style>
 </head>
 <body>
-    <nav>
-        <h1>Hello</h1>
-        <p>Welcome, <span id="name">Doe</span></p> 
-    </nav> 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        setInterval(() => {
-            fetch('http://127.0.0.1:8000/ex/api/')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('name').innerHTML = data.name
-            })
-            .catch(error => console.error('Error:', error));
-        }, 42000)
-        
-    });
-    </script>
+    {% include 'navbar.html' %}
 </body>
 </html>
