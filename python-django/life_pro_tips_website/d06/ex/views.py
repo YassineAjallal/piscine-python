@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.http import  JsonResponse
+from django.http import  JsonResponse, HttpResponse
 from .forms import RegistrationForm, LoginForm, TipsForm
 from .models import User, Tip
 from django.conf import settings
@@ -18,22 +18,62 @@ class Home(View):
         return render(request, 'home.html', {"tips_form": tips_form,
                                                 "name": name,
                                                 'is_active': request.session.get("is_active"),
-                                                'all_tips' : all_tips})
+                                                'all_tips' : all_tips,
+                                                'nb_upvotes' : 0,
+                                                'nb_downvotes': 0})
     def post(self, request, *args, **kwargs):
         if 'action' in request.POST and request.POST['action'] == 'logout':
             request.session['is_active'] = False
             return redirect('login_view')
+        elif 'tip_id' in request.POST and request.POST['action'] == 'upvote':
+            return self.upvote(request)
         else:
-            tips_form = TipsForm(request.POST)
-            if tips_form.is_valid() and request.session.get('is_active'):
-                content = tips_form.cleaned_data['content']
-                Tip.objects.create(content=content, author=request.session['name'])
-            tips_form = TipsForm()
-            all_tips = Tip.objects.all()
-            return render(request, 'home.html', {"tips_form": tips_form,
-                                                "name": request.session.get("name"),
-                                                'is_active': request.session.get("is_active"),
-                                                'all_tips' : all_tips})
+            return self.add_tip(request)
+    # add new tip
+    def add_tip(self, request):
+        tips_form = TipsForm(request.POST)
+        if tips_form.is_valid() and request.session.get('is_active'):
+            content = tips_form.cleaned_data['content']
+            Tip.objects.create(content=content, author=request.session['name'])
+        tips_form = TipsForm()
+        all_tips = Tip.objects.all()
+        return render(request, 'home.html', {"tips_form": tips_form,
+                                            "name": request.session.get("name"),
+                                            'is_active': request.session.get("is_active"),
+                                            'all_tips' : all_tips,
+                                            'nb_upvotes' : 0,
+                                            'nb_downvotes': 0})
+
+    def upvote(self, request):
+        tip_id = int(request.POST.get('tip_id'))
+        selected_tip = Tip.objects.get(id=tip_id)
+        already_upvote = True
+        already_downvote = True
+        user = User.objects.get(name=request.session.get('name'))
+        try:
+            selected_tip.upvote.get(name=user.name)
+        except:
+            already_upvote = False
+        try:
+            selected_tip.downvote.get(name=user.name)
+        except:
+            already_downvote = False
+        if (not already_upvote):
+            selected_tip.upvote.add(user)
+            if already_downvote:
+                selected_tip.downvote.remove(user)
+        else:
+            selected_tip.upvote.remove(user)
+        nb_upvotes = selected_tip.upvote.all().count()
+        nb_downvotes = selected_tip.downvote.all().count()
+        tips_form = TipsForm()
+        all_tips = Tip.objects.all()
+        return render(request, 'home.html', {"tips_form": tips_form,
+                                            "name": request.session.get("name"),
+                                            'is_active': request.session.get("is_active"),
+                                            'all_tips' : all_tips,
+                                            'nb_upvotes' : nb_upvotes,
+                                            'nb_downvotes': nb_downvotes})
 
 class DataApi(View):
     def get(self, request, *args, **kwargs):

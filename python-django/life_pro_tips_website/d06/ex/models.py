@@ -10,3 +10,5 @@ class Tip(models.Model):
     content = models.TextField()
     author = models.CharField(max_length=64)
     date = models.DateField(auto_now=True)
+    upvote = models.ManyToManyField(User, related_name='upvote')
+    downvote = models.ManyToManyField(User, related_name='downvote')

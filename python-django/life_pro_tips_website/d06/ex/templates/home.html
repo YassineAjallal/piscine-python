@@ -31,34 +31,56 @@
         }
         .tips {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
             justify-content: center;
             padding: 20px;
         }
         .tip-container {
-            border: 1px solid #ddd;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #f8f8f8;
             border-radius: 8px;
-            padding: 16px;
-            margin: 16px;
-            max-width: 400px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .tip-content {
-            font-size: 1.2em;
-            margin-bottom: 12px;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 10px;
         }
 
         .tip-author {
-            font-style: italic;
-            color: #555;
+            font-size: 14px;
+            color: #666;
         }
 
         .tip-date {
-            font-size: 0.8em;
+            font-size: 12px;
             color: #888;
         }
+
+        .vote-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .vote-button {
+            cursor: pointer;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .vote-count {
+            margin-left: 0px;
+            font-size: 14px;
+            color: #888;
+        }
+
         textarea {
             width: 100%;
             padding: 10px;
@@ -85,6 +107,31 @@
                 <div class="tip-date">
                     Created on: {{ tip.date }}
                 </div>
+                {% if is_active %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="vote-buttons">
+                            <input type="hidden" name="tip_id" value="{{ tip.id }}">
+                            {% buttons %}
+                            <button type="submit" class="btn btn-success" style="margin: 15px 0;" name="action" value="upvote">
+                                Upvote
+                            </button>
+                            {% endbuttons %}
+                            {% buttons %}
+                            <button type="submit" class="btn btn-primary" style="margin: 15px 0;" name="action" value="downvote">
+                                Downvote
+                            </button>
+                            {% endbuttons %}
+                            {% buttons %}
+                            <button type="submit" class="btn btn-danger" style="margin: 15px 0;" name="action" value="delete">
+                                Delete
+                            </button>
+                            {% endbuttons %}
+                        </div>
+                    </form>
+                {% endif %}
+                <div class="vote-count">Upvotes: {{ nb_upvotes }}</div>
+                <div class="vote-count">Downvotes: {{ nb_downvotes }}</div>
             </div>
         {% endfor %}
     </div>
