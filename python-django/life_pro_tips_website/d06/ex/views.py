@@ -1,25 +1,40 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.urls import reverse
-from .forms import RegistrationForm, LoginForm
-from .models import User
+from django.http import  JsonResponse
+from .forms import RegistrationForm, LoginForm, TipsForm
+from .models import User, Tip
 from django.conf import settings
 import random
 
 class Home(View):
     def get(self, request, *args, **kwargs):
         name: str
-        if (request.session["is_active"]):
-            name = request.session["name"]
+        tips_form = TipsForm()
+        all_tips = Tip.objects.all()
+        if (request.session.get("is_active")):
+            name = request.session.get("name")
         else:
             name = getattr(settings, 'DEFAULT_NAMES')[random.randint(0, 9)]
-        return render(request, 'home.html', {"name": name, 'is_active': request.session["is_active"]})
+        return render(request, 'home.html', {"tips_form": tips_form,
+                                                "name": name,
+                                                'is_active': request.session.get("is_active"),
+                                                'all_tips' : all_tips})
     def post(self, request, *args, **kwargs):
         if 'action' in request.POST and request.POST['action'] == 'logout':
             request.session['is_active'] = False
             return redirect('login_view')
-    
+        else:
+            tips_form = TipsForm(request.POST)
+            if tips_form.is_valid() and request.session.get('is_active'):
+                content = tips_form.cleaned_data['content']
+                Tip.objects.create(content=content, author=request.session['name'])
+            tips_form = TipsForm()
+            all_tips = Tip.objects.all()
+            return render(request, 'home.html', {"tips_form": tips_form,
+                                                "name": request.session.get("name"),
+                                                'is_active': request.session.get("is_active"),
+                                                'all_tips' : all_tips})
+
 class DataApi(View):
     def get(self, request, *args, **kwargs):
         names = getattr(settings, 'DEFAULT_NAMES')
@@ -28,7 +43,7 @@ class DataApi(View):
     
 class Login(View):
     def get(self, request, *args, **kwargs):
-        if (request.session["is_active"]):
+        if (request.session.get("is_active")):
             return redirect('home_view')
         login_form = LoginForm()
         return render(request, 'login.html', {"login_form": login_form})
@@ -56,7 +71,7 @@ class Login(View):
 
 class Registration(View):
     def get(self, request, *args, **kwargs):
-        if (request.session["is_active"]):
+        if (request.session.get("is_active")):
             return redirect('home_view')
         registration_form = RegistrationForm()
         return render(request, 'registration.html', {"registration_form": registration_form})

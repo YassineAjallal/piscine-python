@@ -1,3 +1,7 @@
+{% load bootstrap3 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,9 +29,75 @@
             margin: 5px 0 0 0;
             color: #ecf0f1;  /* Name message text color */
         }
+        .tips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+        .tip-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-content {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+
+        .tip-author {
+            font-style: italic;
+            color: #555;
+        }
+
+        .tip-date {
+            font-size: 0.8em;
+            color: #888;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     {% include 'navbar.html' %}
+    <div class="tips">
+        {% for tip in all_tips %}    
+            <div class="tip-container">
+                <div class="tip-content">
+                    {{ tip.content }}
+                </div>
+                <div class="tip-author">
+                    {{ tip.author }}
+                </div>
+                <div class="tip-date">
+                    Created on: {{ tip.date }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% if is_active %}
+        <form action="" method="POST" style="  width: 20%; margin: 20px auto">
+            {% csrf_token %}
+            {% bootstrap_form tips_form %}
+            {% buttons %}
+                <button type="submit" class="btn btn-success" style="margin: 15px 0;">
+                    Create
+                </button>
+            {% endbuttons %}
+        </form>
+    {% endif %}
 </body>
 </html>
