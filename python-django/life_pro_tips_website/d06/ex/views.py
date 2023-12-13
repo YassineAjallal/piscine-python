@@ -6,11 +6,22 @@ from .models import User, Tip
 from django.conf import settings
 import random
 
+# class that hold tip information to easly read it from template
+class TipInfo:
+    def __init__(self, id, content, author, date, upvotes, downvotes) -> None:
+        self.id = id
+        self.content = content
+        self.author = author
+        self.date = date
+        self.upvotes = upvotes
+        self.downvotes = downvotes
+
 class Home(View):
     def get(self, request, *args, **kwargs):
         name: str
         tips_form = TipsForm()
-        all_tips = Tip.objects.all()
+        all_tips = [TipInfo(tip.id, tip.content, tip.author, tip.date, tip.upvote.all().count(), tip.downvote.all().count()) 
+                    for tip in Tip.objects.all()]
         if (request.session.get("is_active")):
             name = request.session.get("name")
         else:
@@ -18,15 +29,13 @@ class Home(View):
         return render(request, 'home.html', {"tips_form": tips_form,
                                                 "name": name,
                                                 'is_active': request.session.get("is_active"),
-                                                'all_tips' : all_tips,
-                                                'nb_upvotes' : 0,
-                                                'nb_downvotes': 0})
+                                                'all_tips' : all_tips})
     def post(self, request, *args, **kwargs):
         if 'action' in request.POST and request.POST['action'] == 'logout':
             request.session['is_active'] = False
             return redirect('login_view')
-        elif 'tip_id' in request.POST and request.POST['action'] == 'upvote':
-            return self.upvote(request)
+        elif 'tip_id' in request.POST and (request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote'):
+            return self.vote(request, request.POST['action'])
         else:
             return self.add_tip(request)
     # add new tip
@@ -36,15 +45,15 @@ class Home(View):
             content = tips_form.cleaned_data['content']
             Tip.objects.create(content=content, author=request.session['name'])
         tips_form = TipsForm()
-        all_tips = Tip.objects.all()
+        all_tips = [TipInfo(tip.id, tip.content, tip.author, tip.date, tip.upvote.all().count(), tip.downvote.all().count()) 
+                    for tip in Tip.objects.all()]
         return render(request, 'home.html', {"tips_form": tips_form,
                                             "name": request.session.get("name"),
                                             'is_active': request.session.get("is_active"),
-                                            'all_tips' : all_tips,
-                                            'nb_upvotes' : 0,
-                                            'nb_downvotes': 0})
+                                            'all_tips' : all_tips})
 
-    def upvote(self, request):
+    # affect upvote or downvote in a selected tip
+    def vote(self, request, action):
         tip_id = int(request.POST.get('tip_id'))
         selected_tip = Tip.objects.get(id=tip_id)
         already_upvote = True
@@ -58,22 +67,28 @@ class Home(View):
             selected_tip.downvote.get(name=user.name)
         except:
             already_downvote = False
-        if (not already_upvote):
-            selected_tip.upvote.add(user)
-            if already_downvote:
-                selected_tip.downvote.remove(user)
+        if action == 'upvote':
+            if (not already_upvote):
+                selected_tip.upvote.add(user)
+                if already_downvote:
+                    selected_tip.downvote.remove(user)
+            else:
+                selected_tip.upvote.remove(user)
         else:
-            selected_tip.upvote.remove(user)
-        nb_upvotes = selected_tip.upvote.all().count()
-        nb_downvotes = selected_tip.downvote.all().count()
+            if (not already_downvote):
+                selected_tip.downvote.add(user)
+                if already_upvote:
+                    selected_tip.upvote.remove(user)
+            else:
+                selected_tip.downvote.remove(user)
+        
         tips_form = TipsForm()
-        all_tips = Tip.objects.all()
+        all_tips = [TipInfo(tip.id, tip.content, tip.author, tip.date, tip.upvote.all().count(), tip.downvote.all().count()) 
+                    for tip in Tip.objects.all()]
         return render(request, 'home.html', {"tips_form": tips_form,
                                             "name": request.session.get("name"),
                                             'is_active': request.session.get("is_active"),
-                                            'all_tips' : all_tips,
-                                            'nb_upvotes' : nb_upvotes,
-                                            'nb_downvotes': nb_downvotes})
+                                            'all_tips' : all_tips})
 
 class DataApi(View):
     def get(self, request, *args, **kwargs):
