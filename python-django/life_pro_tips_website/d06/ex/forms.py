@@ -1,16 +1,21 @@
 from django import forms
-from .models import Tip
-class RegistrationForm(forms.Form):
-    user_name = forms.CharField(max_length=64)
-    password = forms.CharField(widget=forms.PasswordInput())
-    password_confirmation = forms.CharField(widget=forms.PasswordInput())
+from .models import Tip, CustomUser
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
-class LoginForm(forms.Form):
-    user_name = forms.CharField(max_length=64)
-    password = forms.CharField(widget=forms.PasswordInput())
 
 class TipsForm(forms.ModelForm):
     class Meta:
         model = Tip
         fields = ["content"]
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'password1', 'password2']
+
+class CustomAuthenticationForm(AuthenticationForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'password']
+
 

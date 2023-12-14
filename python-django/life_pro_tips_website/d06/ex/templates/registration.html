@@ -36,11 +36,11 @@
 </head>
 <body>
     {% include 'navbar.html' %}
-    {% if error|length > 0 %}
+    <!-- {% if error|length > 0 %}
         <div class="alert alert-danger">
             <strong>Error!</strong> {{ error }}
         </div>
-    {% endif %}
+    {% endif %} -->
     <form action="" method="POST">
         {% csrf_token %}
         {% bootstrap_form registration_form %}
