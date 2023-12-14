@@ -1,6 +1,9 @@
 from django.contrib import admin
-from .models import User, Tip
+from .models import CustomUser, Tip
+from django.contrib.auth.admin import UserAdmin
 
-# Register your models here.
-admin.site.register(User)
+
+class CustomUserAdmin(UserAdmin):
+    pass
+admin.site.register(CustomUser)
 admin.site.register(Tip)
