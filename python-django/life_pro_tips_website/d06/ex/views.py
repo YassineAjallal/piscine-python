@@ -73,12 +73,13 @@ class Home(View):
             else:
                 selected_tip.upvote.remove(user)
         else:
-            if (not already_downvote):
-                selected_tip.downvote.add(user)
-                if already_upvote:
-                    selected_tip.upvote.remove(user)
-            else:
-                selected_tip.downvote.remove(user) 
+            if user.username == selected_tip.author or user.has_perm('ex.downvote_tip'):
+                if (not already_downvote):
+                    selected_tip.downvote.add(user)
+                    if already_upvote:
+                        selected_tip.upvote.remove(user)
+                else:
+                    selected_tip.downvote.remove(user) 
         return redirect('home_view')
 
     def delete_tip(self, request, tip_id):

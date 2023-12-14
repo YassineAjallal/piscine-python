@@ -11,3 +11,5 @@ class Tip(models.Model):
     date = models.DateField(auto_now=True)
     upvote = models.ManyToManyField(CustomUser, related_name='upvote')
     downvote = models.ManyToManyField(CustomUser, related_name='downvote')
+    class Meta:
+        permissions = (("downvote", "can downvote a tip"),)
