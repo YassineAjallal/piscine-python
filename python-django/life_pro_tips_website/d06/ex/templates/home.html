@@ -91,10 +91,26 @@
             box-sizing: border-box;
             font-size: 16px;
         }
+        .floating-circle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: #3498db; /* Circle background color */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            color: #fff; /* Text color */
+            font-size: 24px; /* Text size */
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+        }
     </style>
 </head>
 <body>
     {% include 'navbar.html' %}
+
     <div class="tips">
         {% for tip in all_tips %}    
             <div class="tip-container">
@@ -145,6 +161,9 @@
                 </button>
             {% endbuttons %}
         </form>
+        <div class="floating-circle">
+            {{ nb_points }}
+        </div>
     {% endif %}
 </body>
 </html>
