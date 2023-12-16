@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import  JsonResponse
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import Permission
 from .forms import TipsForm, CustomAuthenticationForm, CustomUserCreationForm
 from .models import CustomUser, Tip
 import random
@@ -54,11 +53,8 @@ class Home(View):
     def add_tip(self, request):
         tips_form = TipsForm(request.POST)
         if tips_form.is_valid() and request.session.get('_auth_user_id'):
-            user = CustomUser.objects.get(username=request.user)
             content = tips_form.cleaned_data['content']
-            tip = Tip(content=content, author=request.user)
-            tip.save()
-            user.tips.add(tip)
+            Tip.objects.create(content=content, author=request.user)
 
         return redirect('home_view')
 
@@ -88,40 +84,25 @@ class Home(View):
             else:
                 selected_tip.upvote.remove(user)
         else:
-            if user.username == selected_tip.author or user.has_perm('ex.downvote_tip'):
+            if user.username == selected_tip.author or user.can_downvote_tip():
                 if (not already_downvote):
                     if (request.user != tip_owner.username):
                         if (tip_owner.nb_points < 2):
                             tip_owner.nb_points = 0
                         else:
                             tip_owner.nb_points -= 2
-                    tip_owner.save()
+                        tip_owner.save()
                     selected_tip.downvote.add(user)
                     if already_upvote:
                         selected_tip.upvote.remove(user)
                 else:
                     selected_tip.downvote.remove(user) 
-        
-        if tip_owner.nb_points >= 15 and (not tip_owner.has_perm('ex.downvote_tip')):
-            permission = Permission.objects.get(codename='downvote')
-            tip_owner.user_permissions.add(permission)
-            tip_owner.save()
-        print(tip_owner.has_perm('ex.downvote_tip'))
-        # elif (tip_owner.nb_points < 15 and tip_owner.has_perm('ex.downvote_tip')):
-        #     permission = Permission.objects.get(codename='downvote')
-        #     tip_owner.user_permissions.remove(permission)
-        # if (tip_owner.nb_points >= 30 and not tip_owner.has_perm('ex.delete_tip')):
-        #     permission = Permission.objects.get(codename='delete')
-        #     tip_owner.user_permissions.add(permission)
-        # elif (tip_owner.nb_points < 30 and tip_owner.has_perm('ex.delete_tip')):
-        #     permission = Permission.objects.get(codename='delete')
-        #     tip_owner.user_permissions.remove(permission)
         return redirect('home_view')
 
     def delete_tip(self, request, tip_id):
         selected_tip = Tip.objects.get(id=tip_id)
         user = CustomUser.objects.get(username=request.user)
-        if user.username == selected_tip.author or user.has_perm('ex.delete_tip'):
+        if user.username == selected_tip.author or user.can_delete_tip():
             selected_tip.delete()
         return redirect('home_view')
 
