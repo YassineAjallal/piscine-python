@@ -92,8 +92,9 @@
         {% else %}
             <div class="auth-buttons">
                 {% url 'login_view' as login_url %}
-                <a href="{{ login_url }}"><button>Sign In</button></a>
-                <button>Sign Up</button>
+                {% url 'register_view' as register_url %}
+                <a href="{{ login_url }}"><button>Login</button></a>
+                <a href="{{ register_url }}"><button>Register</button></a>
             </div>
         {% endif %}
         

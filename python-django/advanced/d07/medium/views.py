@@ -1,11 +1,14 @@
 from typing import Any
+from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponse as HttpResponse
 from django.shortcuts import redirect
 from django.views.generic.base import TemplateView, RedirectView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout
+from .forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout, authenticate
 from .models import Article
 
 class Articles(TemplateView):
@@ -72,3 +75,20 @@ class Details(DetailView):
                 return redirect('login_view')
         return super().dispatch(request, *args, **kwargs)
     
+class Register(CreateView):
+    template_name = 'register.html'
+    form_class = UserCreationForm
+    model = User
+    success_url ='/'
+
+    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        if request.user.is_authenticated:
+            return redirect('home_view')
+        return super().get(request, *args, **kwargs)
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        valid = super().form_valid(form)
+        form.save()
+        username, password = form.cleaned_data.get('username'), form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=password)
+        login(self.request, user)
+        return valid

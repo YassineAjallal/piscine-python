@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,8 +47,8 @@
             border-radius: 4px;
         }
 
-        .login {
-            background-color: #4caf50;
+        .register {
+            background-color: #007bff;
             color: #fff;
             padding: 10px;
             border: none;
@@ -59,8 +59,8 @@
             transition: 0.3s;
         }
 
-        .login:hover {
-            background-color: #4caf4fc0;
+        .register:hover {
+            background-color: #007bffb8;
         }
         .error-message {
             color: #d9534f;  /* Bootstrap's danger color */
@@ -106,9 +106,9 @@
     <div class="form">
         <form method="post" class="sign">
             {% csrf_token %}
-            <h2>Login</h2>
+            <h2>Register</h2>
             {{ form.as_p }}
-            <button type="submit" class="login">Login</button>
+            <button type="submit" class="register">register</button>
         </form>
     </div>
 
