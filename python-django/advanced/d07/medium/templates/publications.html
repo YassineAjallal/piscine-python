@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>articles</title>
+    <title>publications</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,7 +30,7 @@
             padding: 15px;
             text-align: center;
             border-bottom: 1px solid #dee2e6;
-            width: 20%;
+            width: 25%;
         }
 
         th {
@@ -66,23 +66,21 @@
             <thead>
                 <tr>
                     <th>Title</th>
-                    <th>Author</th>
                     <th>Creation Date</th>
                     <th>Synopsis</th>
                     <th>Link</th>
                 </tr>
             </thead>
             <tbody>
-                {% for article in articles %}        
-                    <tr>
-                        <td>{{article.title}}</td>
-                        <td>{{article.author}}</td>
-                        <td>{{article.created}}</td>
-                        <td>{{article.synopsis}}</td>
-                        {% url 'details_view' pk=article.id as details_url %}
-                        <td><a href="{{ details_url }}"><button class="success-button">Read</button></a></td>
-                    </tr>
+                <tr>
+                    {% for publication in publications %}        
+                        <td>{{publication.title}}</td>
+                        <td>{{publication.created}}</td>
+                        <td>{{publication.synopsis}}</td>
+                        {% url 'details_view' pk=publication.id as publication_url %}
+                        <td><a href="{{ publication_url }}"><button class="success-button">Read</button></a></td>
                     {% endfor %}
+                </tr>
                 <!-- Add more rows as needed -->
             </tbody>
         </table>

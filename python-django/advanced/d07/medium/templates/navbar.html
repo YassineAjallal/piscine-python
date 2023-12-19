@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #343a40;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .nav-links li {
+            margin-right: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            align-items: center;
+        }
+
+        .auth-buttons button {
+            margin-left: 15px;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #343a40;
+            background-color: #ffffff;
+        }
+        a
+        {
+            text-decoration: none;
+        }
+        .username
+        {
+            color: white;
+            text-decoration: underline;
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">MyDev</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        {% if user.is_authenticated %}
+            <div class="auth-buttons">
+                <p class="username">{{ user.username }}</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button name="action" value="logout">Log out</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="auth-buttons">
+                {% url 'login_view' as login_url %}
+                <a href="{{ login_url }}"><button>Sign In</button></a>
+                <button>Sign Up</button>
+            </div>
+        {% endif %}
+        
+    </div>
+
+    <!-- Your page content goes here -->
+
+</body>
+</html>
