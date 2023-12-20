@@ -61,6 +61,11 @@
             <p>{{article.content}}</p>
         </div>
     </div>
-
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="user" value="{{user}}">
+        <input type="hidden" name="article" value="{{article}}">
+        <button type="submit">Like</button>
+    </form>
 </body>
 </html>

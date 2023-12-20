@@ -57,6 +57,29 @@
         .success-button:hover {
             background-color: #218838; /* Darker shade on hover */
         }
+        .add-button {
+            width: 100%;
+            display: flex;
+            justify-content: end;
+        }
+        .add-button button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #3498db;
+            color: #fff;
+            transition: background-color 0.3s;
+            margin: 20px;
+        }
+
+        .add-button button:hover  {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -84,6 +107,12 @@
                 <!-- Add more rows as needed -->
             </tbody>
         </table>
+    </div>
+    <div class="add-button">
+        {% url 'publish_view' as publish_url %}
+        <a href="{{publish_url}}">
+            <button >Add</button>
+        </a>
     </div>
 </body>
 </html>
