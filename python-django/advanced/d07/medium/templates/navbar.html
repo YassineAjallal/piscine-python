@@ -77,9 +77,14 @@
     <div class="navbar">
         <div class="logo">MyDev</div>
         <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            {% url 'home_view' as home_url %}
+            <li><a href="{{ home_url }}">Home</a></li>
+            {% if user.is_authenticated %}  
+                {% url 'publications_view' as publications_url %}
+                {% url 'favourites_view' as favourite_url %}
+                <li><a href="{{publications_url}}">Publications</a></li>
+                <li><a href="{{favourite_url}}">Favourites</a></li>
+            {% endif %}
         </ul>
         {% if user.is_authenticated %}
             <div class="auth-buttons">

@@ -30,7 +30,7 @@
             padding: 15px;
             text-align: center;
             border-bottom: 1px solid #dee2e6;
-            width: 25%;
+            width: 20%;
         }
 
         th {
@@ -85,28 +85,34 @@
 <body>
     {% include 'navbar.html' %}
     <div class="articles">
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Creation Date</th>
-                    <th>Synopsis</th>
-                    <th>Link</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    {% for publication in publications %}        
-                        <td>{{publication.title}}</td>
-                        <td>{{publication.created}}</td>
-                        <td>{{publication.synopsis}}</td>
-                        {% url 'details_view' pk=publication.id as publication_url %}
-                        <td><a href="{{ publication_url }}"><button class="success-button">Read</button></a></td>
+        {% if publications|length == 0 %}
+            <h1>No Publications Available</h1>
+        {% else %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Creation Date</th>
+                        <th>Synopsis</th>
+                        <th>When</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for publication in publications|dictsortreversed:"created" %}        
+                        <tr>
+                            <td>{{publication.title}}</td>
+                            <td>{{publication.created}}</td>
+                            <td>{{publication.synopsis|truncatechars:20}}</td>
+                            <td>{{publication.created|timesince}}</td>
+                            {% url 'details_view' pk=publication.id as details_url %}
+                            <td><a href="{{ details_url }}"><button class="success-button">Read</button></a></td>
+                        </tr>
                     {% endfor %}
-                </tr>
-                <!-- Add more rows as needed -->
-            </tbody>
-        </table>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        {% endif %}
     </div>
     <div class="add-button">
         {% url 'publish_view' as publish_url %}

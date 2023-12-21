@@ -56,15 +56,23 @@
             color: #fff;
             width: 200px;
             font-weight: bold;
-            background-color: #ce0f0f;
-            border: 1px solid #ce0f0f;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-        }
 
+        }
+        .add-to 
+        {
+            background-color: #efa44b;
+            border: 1px solid #efa44b;
+        }
+        .remove-from
+        {
+            background-color: #ff4157;
+            border: 1px solid #ff4157;
+        }
         .favorite-button:hover {
-            background-color: #ce0f0fc3;
+           opacity: 0.6;
         }
     </style>
 </head>
@@ -79,10 +87,16 @@
             <p>{{article.content}}</p>
         </div>
     </div>
-    <form action="" method="post" style="text-align: center;">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="favorite-button">Like</button>
-    </form>
+    {% if user.is_authenticated %}       
+        <form action="" method="post" style="text-align: center;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if already_liked %}   
+                <button type="submit" class="favorite-button remove-from">Remove From Favourite</button>
+            {% else %}
+                <button type="submit" class="favorite-button add-to">Add To Favourite</button>
+            {% endif %}
+        </form>
+    {% endif %}
 </body>
 </html>

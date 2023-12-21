@@ -62,7 +62,6 @@ class Publications(TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context =  super().get_context_data(**kwargs)
-        print(self.request.user)
         context['publications'] = Article.objects.filter(author__username=str(self.request.user))
         return context
 
@@ -74,16 +73,27 @@ class Publications(TemplateView):
                 return redirect('login_view')
         return super().dispatch(request, *args, **kwargs)
 
-# class AddToFavourite(CreateView):
-#     model = UserFavouriteArticle
-#     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-#         return Details.as_view()
-#     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-#         print('here')
-#         return super().post(request, *args, **kwargs)
+class Favourites(TemplateView):
+    template_name = 'favourites.html'
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_authenticated:
+            return redirect('login_view')
+        return super().get(request, *args, **kwargs)
 
-#     def form_valid(self, form: BaseModelForm) -> HttpResponse:
-#         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context =  super().get_context_data(**kwargs)
+        favourites = UserFavouriteArticle.objects.filter(user__username=str(self.request.user))
+        context['favourites'] = [favourite.article for favourite in favourites]
+        return context
+
+
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if self.request.method == 'POST':
+            if 'action' in self.request.POST and self.request.POST['action'] == 'logout':
+                logout(request)
+                return redirect('login_view')
+        return super().dispatch(request, *args, **kwargs)
 
 class Details(DetailView, CreateView):
     
@@ -94,13 +104,22 @@ class Details(DetailView, CreateView):
     article_object: Article
     pk: int
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        return super().get(request, *args, **kwargs)
-
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            try:
+                user = UserFavouriteArticle.objects.get(user=self.request.user, article=self.get_object())
+                context['already_liked'] = True
+            except UserFavouriteArticle.DoesNotExist:
+                context['already_liked'] = False
+        return context
     def get_success_url(self):
         return reverse_lazy('details_view', kwargs={'pk': self.pk})
 
     def post(self, request, *args, **kwargs):
+        if 'action' in self.request.POST and self.request.POST['action'] == 'logout':
+            logout(request)
+            return redirect('login_view')
         self.article_object = self.get_object()
         self.pk = self.get_object().pk
         self.model = UserFavouriteArticle

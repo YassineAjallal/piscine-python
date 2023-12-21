@@ -30,7 +30,7 @@
             padding: 15px;
             text-align: center;
             border-bottom: 1px solid #dee2e6;
-            width: 20%;
+            width: calc(100% / 6);
         }
 
         th {
@@ -69,16 +69,18 @@
                     <th>Author</th>
                     <th>Creation Date</th>
                     <th>Synopsis</th>
+                    <th>When</th>
                     <th>Link</th>
                 </tr>
             </thead>
             <tbody>
-                {% for article in articles %}        
+                {% for article in articles|dictsortreversed:"created" %}        
                     <tr>
                         <td>{{article.title}}</td>
                         <td>{{article.author}}</td>
                         <td>{{article.created}}</td>
-                        <td>{{article.synopsis}}</td>
+                        <td>{{article.synopsis|truncatechars:20}}</td>
+                        <td>{{article.created|timesince}}</td>
                         {% url 'details_view' pk=article.id as details_url %}
                         <td><a href="{{ details_url }}"><button class="success-button">Read</button></a></td>
                     </tr>
