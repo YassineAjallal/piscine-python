@@ -1,4 +1,5 @@
 from typing import Any
+from django.urls import reverse_lazy
 from django.forms.models import BaseModelForm
 from django.http import HttpRequest, HttpResponse, HttpResponse as HttpResponse
 from django.shortcuts import redirect
@@ -73,28 +74,48 @@ class Publications(TemplateView):
                 return redirect('login_view')
         return super().dispatch(request, *args, **kwargs)
 
-class AddToFavourite(CreateView):
-    model = UserFavouriteArticle
-    def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        return Details.as_view()
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        print('here')
-        return super().post(request, *args, **kwargs)
+# class AddToFavourite(CreateView):
+#     model = UserFavouriteArticle
+#     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+#         return Details.as_view()
+#     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+#         print('here')
+#         return super().post(request, *args, **kwargs)
 
-    def form_valid(self, form: BaseModelForm) -> HttpResponse:
-        return super().form_valid(form)
+#     def form_valid(self, form: BaseModelForm) -> HttpResponse:
+#         return super().form_valid(form)
 
 class Details(DetailView, CreateView):
+    
     model = Article
     template_name='details.html'
     context_object_name = 'article'
     form_class = AddToFavouriteForm
-    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if self.request.method == 'POST':
-            if 'action' in self.request.POST and self.request.POST['action'] == 'logout':
-                logout(request)
-                return redirect('login_view')
-        return super(CreateView, self).dispatch(request, *args, **kwargs)
+    article_object: Article
+    pk: int
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('details_view', kwargs={'pk': self.pk})
+
+    def post(self, request, *args, **kwargs):
+        self.article_object = self.get_object()
+        self.pk = self.get_object().pk
+        self.model = UserFavouriteArticle
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        try:
+            user = UserFavouriteArticle.objects.get(user=self.request.user, article=self.article_object)
+            user.delete()
+            return redirect(self.get_success_url())
+        except UserFavouriteArticle.DoesNotExist:
+            form.instance.user = self.request.user
+            form.instance.article = self.article_object
+        response = super(CreateView, self).form_valid(form)
+        return response
 
 class Register(CreateView):
     template_name = 'register.html'

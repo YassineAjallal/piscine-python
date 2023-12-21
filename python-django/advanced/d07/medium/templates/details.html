@@ -48,6 +48,24 @@
             font-size: 18px;
             line-height: 1.6;
         }
+
+        .favorite-button {
+            display: inline-block;
+            padding: 10px;
+            text-decoration: none;
+            color: #fff;
+            width: 200px;
+            font-weight: bold;
+            background-color: #ce0f0f;
+            border: 1px solid #ce0f0f;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .favorite-button:hover {
+            background-color: #ce0f0fc3;
+        }
     </style>
 </head>
 <body>
@@ -61,11 +79,10 @@
             <p>{{article.content}}</p>
         </div>
     </div>
-    <form action="" method="post">
+    <form action="" method="post" style="text-align: center;">
         {% csrf_token %}
-        <input type="hidden" name="user" value="{{user}}">
-        <input type="hidden" name="article" value="{{article}}">
-        <button type="submit">Like</button>
+        {{ form.as_p }}
+        <button type="submit" class="favorite-button">Like</button>
     </form>
 </body>
 </html>

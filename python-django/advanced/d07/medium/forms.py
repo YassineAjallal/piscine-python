@@ -2,7 +2,6 @@ from typing import Any
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from .models import UserFavouriteArticle
-
 class UserCreationForm(UserCreationForm):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -14,7 +13,8 @@ class AddToFavouriteForm(forms.ModelForm):
     class Meta:
         model = UserFavouriteArticle
         fields = "__all__"
+        exclude = ["user", "article"]
         widgets = {
-            "user": forms.HiddenInput(),
-            "article": forms.HiddenInput()
+            'user': forms.HiddenInput(),
+            'article': forms.HiddenInput()
         }
