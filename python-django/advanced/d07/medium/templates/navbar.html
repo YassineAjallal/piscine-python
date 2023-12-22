@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,13 +78,26 @@
     <div class="navbar">
         <div class="logo">MyDev</div>
         <ul class="nav-links">
+            {% get_current_language as CURRENT_LANGUAGE %}
+            {% get_available_languages as AVAILABLE_LANGUAGES %}
+            {% get_language_info_list for AVAILABLE_LANGUAGES as languages %}
+            <!-- <li>{% trans "english" %}</li> -->
+            {% for language in languages %}
+            <li>
+              <a href="/{{ language.code }}/"
+                {% if language.code == CURRENT_LANGUAGE %} class="active"{% endif %}>
+                    {% trans language.name_local %}
+                <!-- {{ language.name_local }} -->
+              </a>
+            </li>
+          {% endfor %}
             {% url 'home_view' as home_url %}
-            <li><a href="{{ home_url }}">Home</a></li>
+            <li><a href="{{ home_url }}">{% trans "Home" %}</a></li>
             {% if user.is_authenticated %}  
                 {% url 'publications_view' as publications_url %}
                 {% url 'favourites_view' as favourite_url %}
-                <li><a href="{{publications_url}}">Publications</a></li>
-                <li><a href="{{favourite_url}}">Favourites</a></li>
+                <li><a href="{{publications_url}}">{% trans "Publications" %}</a></li>
+                <li><a href="{{favourite_url}}">{% trans "Favourites" %}</a></li>
             {% endif %}
         </ul>
         {% if user.is_authenticated %}
@@ -91,15 +105,15 @@
                 <p class="username">{{ user.username }}</p>
                 <form method="POST">
                     {% csrf_token %}
-                    <button name="action" value="logout">Log out</button>
+                    <button name="action" value="logout">{% trans "Log out" %}</button>
                 </form>
             </div>
         {% else %}
             <div class="auth-buttons">
                 {% url 'login_view' as login_url %}
                 {% url 'register_view' as register_url %}
-                <a href="{{ login_url }}"><button>Login</button></a>
-                <a href="{{ register_url }}"><button>Register</button></a>
+                <a href="{{ login_url }}"><button>{% trans "Login" %}</button></a>
+                <a href="{{ register_url }}"><button>{% trans "Register" %}</button></a>
             </div>
         {% endif %}
         

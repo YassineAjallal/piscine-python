@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -106,7 +107,7 @@
                             <td>{{publication.synopsis|truncatechars:20}}</td>
                             <td>{{publication.created|timesince}}</td>
                             {% url 'details_view' pk=publication.id as details_url %}
-                            <td><a href="{{ details_url }}"><button class="success-button">Read</button></a></td>
+                            <td><a href="{{ details_url }}"><button class="success-button">{% trans "Read"%}</button></a></td>
                         </tr>
                     {% endfor %}
                     <!-- Add more rows as needed -->
@@ -117,7 +118,7 @@
     <div class="add-button">
         {% url 'publish_view' as publish_url %}
         <a href="{{publish_url}}">
-            <button >Add</button>
+            <button >{% trans "Add" %}</button>
         </a>
     </div>
 </body>

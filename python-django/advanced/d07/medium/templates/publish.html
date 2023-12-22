@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,9 +103,9 @@
     <div class="form"> 
         <form method="post" class="publish_form">
             {% csrf_token %}
-            <h1>Publish</h1>
+            <h1>{% trans "Publish" %}</h1>
             {{form}}
-            <button type="submit" class="publish">Publish</button>
+            <button type="submit" class="publish">{% trans "Publish" %}</button>
         </form>
     </div>
 </body>

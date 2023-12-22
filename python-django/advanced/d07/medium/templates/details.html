@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,9 +93,9 @@
             {% csrf_token %}
             {{ form.as_p }}
             {% if already_liked %}   
-                <button type="submit" class="favorite-button remove-from">Remove From Favourite</button>
+                <button type="submit" class="favorite-button remove-from">{% trans "Remove From Favourite" %}</button>
             {% else %}
-                <button type="submit" class="favorite-button add-to">Add To Favourite</button>
+                <button type="submit" class="favorite-button add-to">{% trans "Add To Favourite" %}</button>
             {% endif %}
         </form>
     {% endif %}
